@@ -18,23 +18,25 @@ Projede, Hugging Face `datasets` kütüphanesi aracılığıyla erişilen **Stan
 
 * **Kaynak:** Wikipedia makaleleri.
 * **Kullanılan Bölüm:** Geliştirme sürecini optimize etmek amacıyla `train` bölümünün ilk **2000 satırı** (`train[:2000]`) kullanılmıştır.
-* **Hazırlık:** Tekrar eden metin parçaları çıkarılarak ve indeks sıfırlanarak RAG sistemi için temiz bir doküman kütüphanesi oluşturulmuştur.
+* **Hazırlık:** Tekrar eden metin parçaları çıkarılarak ve indeks sıfırlanarak RAG sistemi için temiz bir doküman kütüphanesi (`my_rag_library_local.pkl`) oluşturulmuştur.
 
 ---
 
 ## 🛠️ 3. Kullanılan Yöntemler ve Çözüm Mimarisi (Methods & Architecture)
 
-Proje, **RAG** mimarisi temel alınarak geliştirilmiştir. Akış şöyledir:
+Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
 
-1.  **Soru Alma:** Kullanıcıdan soru alınır.
-2.  **Soru Embedding:** Soru, lokal `sentence-transformers` modeli (`all-mpnet-base-v2`) ile vektöre dönüştürülür.
-3.  **Vektör Arama (Retrieval):** Soru vektörü, önceden oluşturulmuş doküman vektörleri ile **Kosinüs Benzerliği** kullanılarak karşılaştırılır ve en alakalı `k` doküman bulunur.
-4.  **Bağlam Hazırlama:** Bulunan dokümanlar birleştirilir.
-5.  **Zenginleştirilmiş Komut:** Bağlam ve soru, özel talimatlarla birlikte bir komut şablonuna yerleştirilir.
-6.  **Cevap Üretme (Generation):** Komut, **Google Gemini API** (`models/gemini-2.5-flash`) modeline gönderilir.
-7.  **Sonuç:** Modelin ürettiği cevap kullanıcıya gösterilir.
+### **RAG Akış Şeması:**
 
-**✨ Kullanılan Teknolojiler:**
+* **Metin Olarak:**
+    ```
+    [Kullanıcı Sorusu] -> [Soru Embedding (local_model)] -> [Vektör Arama (Cosine Sim.)] -> [En Alakalı Metinler (Context)] -> [(Context + Soru) -> Gemini Modeli] -> [Nihai Cevap]
+    ```
+* **Resim Olarak (İsteğe Bağlı):**
+    ![RAG Mimarisi Şeması](images/rag_schema.png)
+    *(Not: Bu resmi 'images' klasörüne 'rag_schema.png' adıyla yüklediğinizi varsayar)*
+
+### **✨ Kullanılan Teknolojiler:**
 
 * **Veri:** Hugging Face `datasets` (SQuAD)
 * **Embedding:** `sentence-transformers` (`all-mpnet-base-v2`)
@@ -56,8 +58,10 @@ Proje, **RAG** mimarisi temel alınarak geliştirilmiştir. Akış şöyledir:
 ## ✅ 4. Elde Edilen Sonuçlar (Results)
 
 * Çalışan bir RAG chatbot prototipi başarıyla oluşturulmuş ve Streamlit Cloud üzerinden canlıya alınmıştır.
-* Sistem, SQuAD veri setinin kullanılan bölümündeki konularla ilgili sorulara tutarlı cevaplar üretebilmektedir.
-* Kapsam dışı sorulara karşı sistemin halüsinasyon görmeyip **"I couldn't find an answer..."** demesi, RAG mimarisinin güvenilirliğini göstermektedir.
+* Sistem, SQuAD veri setinin kullanılan bölümündeki konularla ilgili sorulara tutarlı cevaplar üretebilmektedir:
+    ![Başarılı Cevap Örneği](images/cevap_bulundu.png) *(Resim dosya adını kontrol et)*
+* Kapsam dışı sorulara karşı sistemin halüsinasyon görmeyip **"I couldn't find an answer..."** demesi, RAG mimarisinin güvenilirliğini göstermektedir:
+    ![Cevap Bulunamadı Örneği](images/cevap_bulunamadi.png) *(Resim dosya adını kontrol et)*
 * Lokal embedding modeli kullanımı, API limit sorunlarını aşmada etkili olmuştur.
 
 ---
@@ -66,19 +70,38 @@ Proje, **RAG** mimarisi temel alınarak geliştirilmiştir. Akış şöyledir:
 
 ### **🚀 Canlı Demo Linki:**
 
-[https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/](https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/) **<-- BURAYI KENDİ LİNKİNLE GÜNCELLE!**
+[https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/](https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/) **<-- LİNKİ KONTROL ET!**
 
 ### **Arayüz Önizlemesi:**
 
-![RAG Bilgi Asistanı Arayüzü](images/streamlit_arayuz.png)
-*(Not: Bu resmi reponuzdaki 'images' klasörüne 'streamlit_arayuz.png' adıyla yüklediğinizi varsayar. İsterseniz bu kısmı silebilir veya yolu güncelleyebilirsiniz.)*
+![RAG Bilgi Asistanı Arayüzü](images/arayuz_genel.png)
+*(Resim dosya adını kontrol et)*
+
+### **📁 Proje Dosya Yapısı:**
+
+* **Metin Olarak:**
+    ```
+    RAG-QA-Assistant/
+    ├── app.py                  # Streamlit uygulama kodu
+    ├── requirements.txt        # Gerekli kütüphaneler
+    ├── my_rag_library_local.pkl # Oluşturulan vektör kütüphanesi
+    ├── images/                 # Ekran görüntüleri ve şemalar
+    │   ├── arayuz_genel.png      # (Varsayılan ad)
+    │   ├── cevap_bulundu.png     # (Varsayılan ad)
+    │   ├── cevap_bulunamadi.png  # (Varsayılan ad)
+    │   └── ... (Diğer resimler)
+    └── README.md               # Bu dosya
+    ```
+* **Resim Olarak (İsteğe Bağlı):**
+    ![Dosya Yapısı Şeması](images/file_structure.png)
+    *(Not: Bu resmi 'images' klasörüne 'file_structure.png' adıyla yüklediğinizi varsayar)*
 
 ### **💻 Lokalde Çalıştırma:**
 
 1.  **Depoyu Klonla:**
     ```bash
-    git clone <SENİN-REPO-LİNKİN>
-    cd <SENİN-REPO-ADIN>
+    git clone [https://github.com/sevvlay/RAG-QA-Assistant](https://github.com/sevvlay/RAG-QA-Assistant)
+    cd RAG-QA-Assistant
     ```
 2.  **Kütüphaneleri Yükle:**
     ```bash
