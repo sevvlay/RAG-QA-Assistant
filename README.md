@@ -1,80 +1,98 @@
-# RAG-QA-Assistant
-# Akbank GenAI Bootcamp: RAG Bilgi Asistanı
+# 🚀 Akbank GenAI Bootcamp: RAG Bilgi Asistanı 📚
 
 Bu proje, Akbank & Global AI Hub tarafından düzenlenen GenAI Bootcamp'in bitirme projesi olarak geliştirilmiştir.
 
-## [cite_start]1. Projenin Amacı (Project Goal) [cite: 9]
+---
 
-[cite_start]Bu projenin temel amacı, **Retrieval Augmented Generation (RAG)** mimarisine dayalı bir chatbot (bilgi asistanı) başarıyla oluşturmak ve dağıtmaktır[cite: 2]. Başlangıçta kitaplarla ilgili bir veri seti hedeflenmiş olsa da, veri seti bulma ve erişimdeki zorluklar nedeniyle proje, sağlam ve güvenilir **Stanford Question Answering Dataset (SQuAD)** kullanılarak adapte edilmiştir.
+## 🎯 1. Projenin Amacı (Project Goal)
 
-[cite_start]Asistan, kullanıcının sorduğu soruyu alıp, SQuAD bilgi tabanından (Wikipedia makaleleri kütüphanesi gibi davranan) en alakalı metin parçalarını almak ve bu alınan bilgilere dayanarak kapsamlı, insan benzeri bir cevap üretmek için Google'ın Gemini modelini kullanmak üzere tasarlanmıştır[cite: 2]. Sistemin önemli bir özelliği, bilgi tabanında bulunmayan sorular için cevap uydurmak yerine "Bilmiyorum" diyebilmesidir.
+Bu projenin temel amacı, **Retrieval Augmented Generation (RAG)** mimarisine dayalı bir chatbot (bilgi asistanı) başarıyla oluşturmak ve dağıtmaktır. Veri seti bulma zorlukları nedeniyle proje, sağlam ve güvenilir **Stanford Question Answering Dataset (SQuAD)** kullanılarak adapte edilmiştir.
 
-## [cite_start]2. Veri Seti Hakkında Bilgi (Dataset Info) [cite: 10]
+Asistan, kullanıcının sorduğu soruyu alıp, SQuAD bilgi tabanından (Wikipedia makaleleri kütüphanesi) en alakalı metin parçalarını almak ve bu bilgilere dayanarak kapsamlı, insan benzeri bir cevap üretmek için Google'ın **Gemini** modelini kullanmak üzere tasarlanmıştır. Sistemin önemli bir özelliği, bilgi tabanında bulunmayan sorular için cevap uydurmak yerine **"Bilmiyorum"** diyebilmesidir (Halüsinasyon Önleme).
+
+---
+
+## 📊 2. Veri Seti Hakkında Bilgi (Dataset Info)
 
 Projede, Hugging Face `datasets` kütüphanesi aracılığıyla erişilen **Stanford Question Answering Dataset (SQuAD)** kullanılmıştır.
 
-* **Kaynak:** Wikipedia makalelerinden türetilmiştir.
-* **Kullanılan Bölüm:** Geliştirme sürecini hızlandırmak ve API limitlerine takılmamak amacıyla veri setinin `train` bölümünün yalnızca ilk **2000 satırı** (`train[:2000]`) kullanılmıştır.
-* **Hazırlık:** Yüklenen ham veriden tekrar eden metin parçaları (`context`/`description`) çıkarılmış ve RAG sistemi için temiz bir doküman kütüphanesi oluşturulmuştur. Bu işlemler sonucunda daha az sayıda benzersiz doküman elde edilmiştir.
+* **Kaynak:** Wikipedia makaleleri.
+* **Kullanılan Bölüm:** Geliştirme sürecini optimize etmek amacıyla `train` bölümünün ilk **2000 satırı** (`train[:2000]`) kullanılmıştır.
+* **Hazırlık:** Tekrar eden metin parçaları çıkarılarak ve indeks sıfırlanarak RAG sistemi için temiz bir doküman kütüphanesi oluşturulmuştur.
 
-## [cite_start]3. Kullanılan Yöntemler ve Çözüm Mimarisi (Methods & Architecture) [cite: 11, 23]
+---
 
-Proje, RAG mimarisi temel alınarak geliştirilmiştir. Akış genel olarak şu şekildedir:
+## 🛠️ 3. Kullanılan Yöntemler ve Çözüm Mimarisi (Methods & Architecture)
 
-1.  **Soru Alma:** Kullanıcıdan bir soru alınır.
-2.  **Soru Embedding:** Kullanıcının sorusu, lokal bir `sentence-transformers` modeli (`all-mpnet-base-v2`) kullanılarak anlamsal bir vektöre dönüştürülür.
-3.  **Vektör Arama (Retrieval):** Bu soru vektörü, önceden hesaplanmış ve depolanmış doküman vektörleri (SQuAD metinlerinin embedding'leri) ile **Kosinüs Benzerliği (Cosine Similarity)** metriği kullanılarak karşılaştırılır. Soruya en çok benzeyen ilk `k` (örneğin 3) doküman bulunur.
-4.  **Bağlam (Context) Hazırlama:** Bulunan doküman metinleri birleştirilerek Gemini modeline sunulacak bağlam oluşturulur.
-5.  **Zenginleştirilmiş Komut (Augmented Prompt):** Hazırlanan bağlam ve kullanıcının orijinal sorusu, Gemini'a özel talimatlar içeren bir komut şablonuna yerleştirilir. Bu şablon, modelin sadece verilen bağlamı kullanmasını ve cevap bağlamda yoksa "Bilmiyorum" demesini söyler.
-6.  **Cevap Üretme (Generation):** Zenginleştirilmiş komut, Google Gemini API'sinin güçlü dil modeline (`models/gemini-2.5-flash`) gönderilir.
-7.  **Sonuç:** Modelin ürettiği nihai cevap kullanıcıya gösterilir.
+Proje, **RAG** mimarisi temel alınarak geliştirilmiştir. Akış şöyledir:
 
-**Kullanılan Teknolojiler:**
+1.  **Soru Alma:** Kullanıcıdan soru alınır.
+2.  **Soru Embedding:** Soru, lokal `sentence-transformers` modeli (`all-mpnet-base-v2`) ile vektöre dönüştürülür.
+3.  **Vektör Arama (Retrieval):** Soru vektörü, önceden oluşturulmuş doküman vektörleri ile **Kosinüs Benzerliği** kullanılarak karşılaştırılır ve en alakalı `k` doküman bulunur.
+4.  **Bağlam Hazırlama:** Bulunan dokümanlar birleştirilir.
+5.  **Zenginleştirilmiş Komut:** Bağlam ve soru, özel talimatlarla birlikte bir komut şablonuna yerleştirilir.
+6.  **Cevap Üretme (Generation):** Komut, **Google Gemini API** (`models/gemini-2.5-flash`) modeline gönderilir.
+7.  **Sonuç:** Modelin ürettiği cevap kullanıcıya gösterilir.
 
-* **Dataset Loading:** Hugging Face `datasets`
-* **Embedding Modeli (Lokal):** `sentence-transformers/all-mpnet-base-v2`
-* **Vektör Karşılaştırma:** `scikit-learn` (Cosine Similarity)
-* [cite_start]**Generation Modeli:** Google Gemini API (`models/gemini-2.5-flash`) [cite: 42]
-* **Web Arayüzü:** Streamlit
+**✨ Kullanılan Teknolojiler:**
+
+* **Veri:** Hugging Face `datasets` (SQuAD)
+* **Embedding:** `sentence-transformers` (`all-mpnet-base-v2`)
+* **Arama:** `scikit-learn` (Cosine Similarity)
+* **Generation:** Google Gemini API (`gemini-2.5-flash`)
+* **Arayüz:** Streamlit
 * **Deployment:** Streamlit Community Cloud
+* **Dil:** Python
 
-## [cite_start]4. Elde Edilen Sonuçlar (Results) [cite: 12]
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python Badge"/>
+  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit Badge"/>
+  <img src="https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini Badge"/>
+  <img src="https://img.shields.io/badge/Hugging_Face-Datasets-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black" alt="Hugging Face Datasets Badge"/>
+</p>
 
-* RAG mimarisi başarıyla uygulanmış ve çalışan bir chatbot prototipi oluşturulmuştur.
-* Sistem, SQuAD veri setinin kullanılan bölümünde bulunan konularla ilgili sorulara, ilgili metin parçalarını bularak tutarlı cevaplar üretebilmektedir.
-* Veri setinin sınırlı olması nedeniyle, kapsam dışı veya veri setinde cevabı bulunmayan sorulara sistemin halüsinasyon görmek yerine "I couldn't find an answer in the provided documents." şeklinde doğru bir geri bildirim verdiği gözlemlenmiştir. Bu, RAG'ın güvenilirliğini artıran önemli bir özelliktir.
-* Lokal embedding modeli kullanımı, API hız limitleri sorununu aşmada ve geliştirme sürecini hızlandırmada etkili olmuştur.
+---
 
-## [cite_start]5. Web Arayüzü & Çalıştırma Kılavuzu (Web Interface & Setup Guide) [cite: 13, 20, 21, 25]
+## ✅ 4. Elde Edilen Sonuçlar (Results)
 
-### **Canlı Demo Linki:**
+* Çalışan bir RAG chatbot prototipi başarıyla oluşturulmuş ve Streamlit Cloud üzerinden canlıya alınmıştır.
+* Sistem, SQuAD veri setinin kullanılan bölümündeki konularla ilgili sorulara tutarlı cevaplar üretebilmektedir.
+* Kapsam dışı sorulara karşı sistemin halüsinasyon görmeyip **"I couldn't find an answer..."** demesi, RAG mimarisinin güvenilirliğini göstermektedir.
+* Lokal embedding modeli kullanımı, API limit sorunlarını aşmada etkili olmuştur.
 
-[cite_start][https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/](https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/) **<-- BURAYI KONTROL ET!** [cite: 13]
+---
 
-### **Lokalde Çalıştırma:**
+## 🌐 5. Web Arayüzü & Çalıştırma Kılavuzu (Web Interface & Setup Guide)
 
-1.  Bu GitHub deposunu klonlayın:
+### **🚀 Canlı Demo Linki:**
+
+[https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/](https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/) **<-- BURAYI KENDİ LİNKİNLE GÜNCELLE!**
+
+### **Arayüz Önizlemesi:**
+
+![RAG Bilgi Asistanı Arayüzü](images/streamlit_arayuz.png)
+*(Not: Bu resmi reponuzdaki 'images' klasörüne 'streamlit_arayuz.png' adıyla yüklediğinizi varsayar. İsterseniz bu kısmı silebilir veya yolu güncelleyebilirsiniz.)*
+
+### **💻 Lokalde Çalıştırma:**
+
+1.  **Depoyu Klonla:**
     ```bash
-    git clone <repo-linkiniz>
-    cd <repo-adini>
+    git clone <SENİN-REPO-LİNKİN>
+    cd <SENİN-REPO-ADIN>
     ```
-2.  Gerekli kütüphaneleri yükleyin:
+2.  **Kütüphaneleri Yükle:**
     ```bash
     pip install -r requirements.txt
     ```
-3.  Google Gemini API anahtarınızı bir ortam değişkeni olarak ayarlayın (veya Streamlit'in secrets mekanizmasını kullanın). Colab dışında `os.environ` kullanmak için:
+3.  **API Anahtarını Ayarla:** Google Gemini API anahtarını ortam değişkeni olarak ayarla:
     ```bash
-    # Linux/macOS
-    export GOOGLE_API_KEY='AIzaSy...' 
-    # Windows (Command Prompt)
-    set GOOGLE_API_KEY=AIzaSy...
-    # Windows (PowerShell)
-    $env:GOOGLE_API_KEY='AIzaSy...'
+    # Örnek (Linux/macOS):
+    export GOOGLE_API_KEY='AIzaSy...'
     ```
-    *Not: Streamlit Secrets, deploy edilen uygulamalar için daha güvenli bir yöntemdir.*
-4.  Streamlit uygulamasını çalıştırın:
+    *(Daha güvenli yöntemler için Streamlit Secrets dokümantasyonuna bakınız)*
+4.  **Uygulamayı Başlat:**
     ```bash
     streamlit run app.py
     ```
 
-Uygulama yerel makinenizde açılacaktır.
+---
