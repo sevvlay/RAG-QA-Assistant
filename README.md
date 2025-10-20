@@ -4,7 +4,7 @@ Bu proje, Akbank & Global AI Hub tarafından düzenlenen GenAI Bootcamp'in bitir
 
 ---
 
-## 1. Projenin Amacı (Project Goal)
+## 1. Projenin Amacı
 
 Bu projenin temel amacı, **Retrieval Augmented Generation (RAG)** mimarisine dayalı bir chatbot (bilgi asistanı) başarıyla oluşturmak ve dağıtmaktır. Veri seti bulma zorlukları nedeniyle proje, sağlam ve güvenilir **Stanford Question Answering Dataset (SQuAD)** kullanılarak adapte edilmiştir.
 
@@ -12,7 +12,7 @@ Asistan, kullanıcının sorduğu soruyu alıp, SQuAD bilgi tabanından (Wikiped
 
 ---
 
-## 2. Veri Seti Hakkında Bilgi (Dataset Info)
+## 2. Veri Seti Hakkında Bilgi
 
 Projede, Hugging Face `datasets` kütüphanesi aracılığıyla erişilen **Stanford Question Answering Dataset (SQuAD)** kullanılmıştır.
 
@@ -22,7 +22,7 @@ Projede, Hugging Face `datasets` kütüphanesi aracılığıyla erişilen **Stan
 
 ---
 
-## 3. Kullanılan Yöntemler ve Çözüm Mimarisi (Methods & Architecture)
+## 3. Kullanılan Yöntemler ve Çözüm Mimarisi 
 
 Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
 
@@ -52,7 +52,7 @@ Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
 
 ---
 
-## 4. Elde Edilen Sonuçlar (Results)
+## 4. Elde Edilen Sonuçlar
 
 * Çalışan bir RAG chatbot prototipi başarıyla oluşturulmuş ve Streamlit Cloud üzerinden canlıya alınmıştır.
 * Sistem, SQuAD veri setinin kullanılan bölümündeki konularla ilgili sorulara tutarlı cevaplar üretebilmektedir:
@@ -64,7 +64,7 @@ Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
 
 ---
 
-## 5. Web Arayüzü & Çalıştırma Kılavuzu (Web Interface & Setup Guide)
+## 5. Web Arayüzü & Çalıştırma Kılavuzu 
 
 ### ** Canlı Demo Linki:**
 
