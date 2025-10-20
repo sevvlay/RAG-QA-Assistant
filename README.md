@@ -72,8 +72,7 @@ Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
 
 ### **Arayüz Önizlemesi:**
 
-![RAG Bilgi Asistanı Arayüzü](images/arayuz_genel.png)
-*(Resim dosya adını kontrol et)*
+![RAG Bilgi Asistanı Arayüzü](images/4.png)
 
 ### ** Proje Dosya Yapısı:**
 
@@ -90,9 +89,6 @@ Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
     │   └── ... (Diğer resimler)
     └── README.md               # Bu dosya
     ```
-* **Resim Olarak (İsteğe Bağlı):**
-    ![Dosya Yapısı Şeması](images/file_structure.png)
-    *(Not: Bu resmi 'images' klasörüne 'file_structure.png' adıyla yüklediğinizi varsayar)*
 
 ### ** Lokalde Çalıştırma:**
 
