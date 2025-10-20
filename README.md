@@ -1,10 +1,10 @@
-# 🚀 Akbank GenAI Bootcamp: RAG Bilgi Asistanı 📚
+# RAG Bilgi Asistanı 
 
 Bu proje, Akbank & Global AI Hub tarafından düzenlenen GenAI Bootcamp'in bitirme projesi olarak geliştirilmiştir.
 
 ---
 
-## 🎯 1. Projenin Amacı (Project Goal)
+## 1. Projenin Amacı (Project Goal)
 
 Bu projenin temel amacı, **Retrieval Augmented Generation (RAG)** mimarisine dayalı bir chatbot (bilgi asistanı) başarıyla oluşturmak ve dağıtmaktır. Veri seti bulma zorlukları nedeniyle proje, sağlam ve güvenilir **Stanford Question Answering Dataset (SQuAD)** kullanılarak adapte edilmiştir.
 
@@ -12,7 +12,7 @@ Asistan, kullanıcının sorduğu soruyu alıp, SQuAD bilgi tabanından (Wikiped
 
 ---
 
-## 📊 2. Veri Seti Hakkında Bilgi (Dataset Info)
+## 2. Veri Seti Hakkında Bilgi (Dataset Info)
 
 Projede, Hugging Face `datasets` kütüphanesi aracılığıyla erişilen **Stanford Question Answering Dataset (SQuAD)** kullanılmıştır.
 
@@ -22,7 +22,7 @@ Projede, Hugging Face `datasets` kütüphanesi aracılığıyla erişilen **Stan
 
 ---
 
-## 🛠️ 3. Kullanılan Yöntemler ve Çözüm Mimarisi (Methods & Architecture)
+## 3. Kullanılan Yöntemler ve Çözüm Mimarisi (Methods & Architecture)
 
 Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
 
@@ -32,11 +32,8 @@ Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
     ```
     [Kullanıcı Sorusu] -> [Soru Embedding (local_model)] -> [Vektör Arama (Cosine Sim.)] -> [En Alakalı Metinler (Context)] -> [(Context + Soru) -> Gemini Modeli] -> [Nihai Cevap]
     ```
-* **Resim Olarak (İsteğe Bağlı):**
-    ![RAG Mimarisi Şeması](images/rag_schema.png)
-    *(Not: Bu resmi 'images' klasörüne 'rag_schema.png' adıyla yüklediğinizi varsayar)*
 
-### **✨ Kullanılan Teknolojiler:**
+### ** Kullanılan Teknolojiler:**
 
 * **Veri:** Hugging Face `datasets` (SQuAD)
 * **Embedding:** `sentence-transformers` (`all-mpnet-base-v2`)
@@ -55,29 +52,30 @@ Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
 
 ---
 
-## ✅ 4. Elde Edilen Sonuçlar (Results)
+## 4. Elde Edilen Sonuçlar (Results)
 
 * Çalışan bir RAG chatbot prototipi başarıyla oluşturulmuş ve Streamlit Cloud üzerinden canlıya alınmıştır.
 * Sistem, SQuAD veri setinin kullanılan bölümündeki konularla ilgili sorulara tutarlı cevaplar üretebilmektedir:
-    ![Başarılı Cevap Örneği](images/cevap_bulundu.png) *(Resim dosya adını kontrol et)*
+    ![Başarılı Cevap Örneği](images/2.png)
+    ![Başarılı Cevap Örneği](images/3.png)
 * Kapsam dışı sorulara karşı sistemin halüsinasyon görmeyip **"I couldn't find an answer..."** demesi, RAG mimarisinin güvenilirliğini göstermektedir:
-    ![Cevap Bulunamadı Örneği](images/cevap_bulunamadi.png) *(Resim dosya adını kontrol et)*
+    ![Cevap Bulunamadı Örneği](images/1.png) 
 * Lokal embedding modeli kullanımı, API limit sorunlarını aşmada etkili olmuştur.
 
 ---
 
-## 🌐 5. Web Arayüzü & Çalıştırma Kılavuzu (Web Interface & Setup Guide)
+## 5. Web Arayüzü & Çalıştırma Kılavuzu (Web Interface & Setup Guide)
 
-### **🚀 Canlı Demo Linki:**
+### ** Canlı Demo Linki:**
 
-[https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/](https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/) **<-- LİNKİ KONTROL ET!**
+[https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/](https://rag-app-assistant-24apsjvzcbho79iaanyg4a.streamlit.app/) 
 
 ### **Arayüz Önizlemesi:**
 
 ![RAG Bilgi Asistanı Arayüzü](images/arayuz_genel.png)
 *(Resim dosya adını kontrol et)*
 
-### **📁 Proje Dosya Yapısı:**
+### ** Proje Dosya Yapısı:**
 
 * **Metin Olarak:**
     ```
@@ -96,7 +94,7 @@ Proje, **RAG** mimarisi temel alınarak geliştirilmiştir.
     ![Dosya Yapısı Şeması](images/file_structure.png)
     *(Not: Bu resmi 'images' klasörüne 'file_structure.png' adıyla yüklediğinizi varsayar)*
 
-### **💻 Lokalde Çalıştırma:**
+### ** Lokalde Çalıştırma:**
 
 1.  **Depoyu Klonla:**
     ```bash
